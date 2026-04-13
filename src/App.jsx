@@ -307,13 +307,16 @@ function StaffHome() {
 function StaffProfileMgmt() {
   const navigate = useNavigate();
   const [filter, setFilter] = createSignal("all");
+  const [selectedProfile, setSelectedProfile] = createSignal(null);
+
   const alumni = [
-    {name:"Juan Dela Cruz",program:"BS Computer Science • Batch 2020",status:"Pending",urgency:"urgent",date:"Feb 27, 2026"},
-    {name:"Maria Clara Santos",program:"AB Psychology • Batch 2018",status:"Processed",urgency:"normal",date:"Feb 26, 2026"},
-    {name:"Roberto Gomez",program:"BS Architecture • Batch 2015",status:"Verified",urgency:"low",date:"Feb 25, 2026"},
-    {name:"Anna Patricia Lim",program:"BS Accountancy • Batch 2022",status:"Pending",urgency:"normal",date:"Feb 25, 2026"},
+    {id: "2020-1042", name:"Juan Dela Cruz",program:"BS Computer Science • Batch 2020",status:"Pending",urgency:"urgent",date:"Feb 27, 2026", docs: ["Transcript of Records"]},
+    {id: "2018-0921", name:"Maria Clara Santos",program:"AB Psychology • Batch 2018",status:"Processed",urgency:"normal",date:"Feb 26, 2026", docs: ["Certified True Copy of Diploma"]},
+    {id: "2015-3012", name:"Roberto Gomez",program:"BS Architecture • Batch 2015",status:"Verified",urgency:"low",date:"Feb 25, 2026", docs: ["Certificate of Graduation"]},
+    {id: "2022-5519", name:"Anna Patricia Lim",program:"BS Accountancy • Batch 2022",status:"Pending",urgency:"normal",date:"Feb 25, 2026", docs: ["Transcript of Records"]},
   ];
   const filtered = () => filter()==="all" ? alumni : alumni.filter(a => a.urgency===filter());
+
   return (
     <div class="home-wrapper">
       <StaffSidebar active="staff-profile"/>
@@ -321,7 +324,53 @@ function StaffProfileMgmt() {
         <div class="page-header"><div class="back-btn" onClick={() => navigate("/staff")}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div><div><h1 style={{"font-size":"24px","font-weight":"700",color:"var(--navy)",margin:"0"}}>Profile Management</h1></div></div>
         <div class="search-bar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by name, degree, or Request ID..."/></div>
         <div class="filter-bar"><button class={`filter-btn urgent ${filter()==="urgent"?"active":""}`} onClick={() => setFilter(filter()==="urgent"?"all":"urgent")}>‼ Urgent</button><button class={`filter-btn ${filter()==="normal"?"active":""}`} onClick={() => setFilter(filter()==="normal"?"all":"normal")}>◎ Normal</button><button class={`filter-btn ${filter()==="low"?"active":""}`} onClick={() => setFilter(filter()==="low"?"all":"low")}>⇐ Low</button></div>
-        <div class="alumni-list"><For each={filtered()}>{(a) => <div class="alumni-card"><div class="alumni-avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="alumni-info"><h3>{a.name}</h3><p>{a.program}</p><div style={{display:"flex",gap:"8px","margin-top":"6px","align-items":"center"}}><div class={`tag ${a.status.toLowerCase()}`}>{a.status}</div><span class="view-details-link">View Details</span></div></div><div class="alumni-meta"><div class="alumni-date">{a.date}</div><div class={`urgency-badge ${a.urgency}`}>{a.urgency.toUpperCase()}</div></div></div>}</For></div>
+        
+        <div class="alumni-list">
+          <For each={filtered()}>{(a) => 
+            <div class="alumni-card">
+              <div class="alumni-avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <div class="alumni-info">
+                <h3>{a.name}</h3><p>{a.program}</p>
+                <div style={{display:"flex",gap:"8px","margin-top":"6px","align-items":"center"}}>
+                  <div class={`tag ${a.status.toLowerCase()}`}>{a.status}</div>
+                  <span class="view-details-link" onClick={() => setSelectedProfile(a)}>View Details</span>
+                </div>
+              </div>
+              <div class="alumni-meta"><div class="alumni-date">{a.date}</div><div class={`urgency-badge ${a.urgency}`}>{a.urgency.toUpperCase()}</div></div>
+            </div>
+          }</For>
+        </div>
+
+        {/* Profile Details Modal */}
+        {selectedProfile() && (
+          <div class="modal-overlay" onClick={() => setSelectedProfile(null)}>
+            <div class="modal" onClick={(e) => e.stopPropagation()}>
+              <div class="modal-header">
+                <h2>{selectedProfile().name}</h2>
+                <p style={{"font-size":"13px", color:"var(--gray-text)"}}>{selectedProfile().program}</p>
+              </div>
+              <div class="modal-body">
+                <div style={{display:"flex", "justify-content":"space-between", "margin-bottom":"20px"}}>
+                   <div class={`tag ${selectedProfile().status.toLowerCase()}`}>{selectedProfile().status}</div>
+                   <div class={`urgency-badge ${selectedProfile().urgency}`}>{selectedProfile().urgency.toUpperCase()}</div>
+                </div>
+                <h4 style={{"font-size":"14px", color:"var(--navy)", "margin-bottom":"12px"}}>Documents Requested</h4>
+                <div class="doc-list">
+                  <For each={selectedProfile().docs}>{(doc) => (
+                    <div class="modal-doc-info">
+                      <div class="doc-item-icon blue" style={{width:"36px",height:"36px","border-radius":"8px"}}><span style={{"font-size":"16px"}}>📄</span></div>
+                      <div><h4 style={{"margin-bottom":"2px"}}>{doc}</h4><p>Request ID: #{selectedProfile().id}</p></div>
+                    </div>
+                  )}</For>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-cancel" onClick={() => setSelectedProfile(null)}>Close</button>
+                <button class="btn-continue">Process Request</button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
@@ -390,12 +439,22 @@ function StaffInventory() {
 /* ===== STAFF: PAYMENT VERIFICATION ===== */
 function StaffPayment() {
   const navigate = useNavigate();
+  const [authModal, setAuthModal] = createSignal(null);
   const [payments, setPayments] = createSignal([
     {name:"Santos, Maria Clara",type:"TUITION FEE",date:"Feb 28, 11:02 AM",method:"GCash",code:"ATN-112-M202",amount:"₱45,200.50",verified:false},
     {name:"De Los Reyes, Juan A.",type:"DOCUMENT FEE",date:"Feb 28, 10:30 AM",method:"BPI",code:"ATN-113-J403",amount:"₱350.00",verified:false},
     {name:"Aguinaldo, Emilio Q.",type:"DOCUMENT FEE",date:"Feb 27, 03:15 PM",method:"GCash",code:"ATN-114-E501",amount:"₱150.00",verified:true},
   ]);
-  const verifyPayment = (code) => { setPayments(payments().map(p => p.code===code?{...p,verified:true}:p)); };
+
+  const handleVerifyClick = (code) => {
+    setAuthModal(code);
+  };
+
+  const confirmPayment = () => {
+    setPayments(payments().map(p => p.code === authModal() ? {...p, verified:true} : p));
+    setAuthModal(null);
+  };
+
   return (
     <div class="home-wrapper">
       <StaffSidebar active="staff-payment"/>
@@ -407,7 +466,44 @@ function StaffPayment() {
           <div class="payment-stat-card"><h3>Pending Verification</h3><div class="payment-stat-number">42</div><div class="payment-stat-tag high">High Priority</div></div>
           <div class="payment-stat-card"><h3>Verified Today</h3><div class="payment-stat-number">128</div><div class="payment-stat-tag up">+12% vs yesterday</div></div>
         </div>
-        <div class="payment-list"><For each={payments()}>{(p) => <div class="payment-item"><div class="alumni-avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="payment-info"><h3>{p.name} <span style={{"font-size":"11px",color:"var(--gray-text)","font-weight":"400","text-transform":"uppercase","margin-left":"8px"}}>{p.type}</span></h3><div class="payment-info-row"><span>📅 {p.date}</span><span>💳 {p.method}</span></div><div class="payment-code">{p.code}</div></div><div style={{display:"flex","align-items":"center",gap:"12px"}}><span class="payment-amount">{p.amount}</span><Show when={!p.verified} fallback={<button class="btn-verified">✓ Verified</button>}><button class="btn-verify-payment" onClick={() => verifyPayment(p.code)}>Verify Payment</button></Show></div></div>}</For></div>
+        <div class="payment-list">
+          <For each={payments()}>{(p) => 
+            <div class="payment-item">
+              <div class="alumni-avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <div class="payment-info">
+                <h3>{p.name} <span style={{"font-size":"11px",color:"var(--gray-text)","font-weight":"400","text-transform":"uppercase","margin-left":"8px"}}>{p.type}</span></h3>
+                <div class="payment-info-row"><span>📅 {p.date}</span><span>💳 {p.method}</span></div>
+                <div class="payment-code">{p.code}</div>
+              </div>
+              <div style={{display:"flex","align-items":"center",gap:"12px"}}>
+                <span class="payment-amount">{p.amount}</span>
+                <Show when={!p.verified} fallback={<button class="btn-verified">✓ Verified</button>}>
+                  <button class="btn-verify-payment" onClick={() => handleVerifyClick(p.code)}>Verify Payment</button>
+                </Show>
+              </div>
+            </div>
+          }</For>
+        </div>
+
+        {/* Payment Biometric Verification Modal */}
+        {authModal() && (
+          <div class="modal-overlay" onClick={() => setAuthModal(null)}>
+            <div class="modal verify-modal" onClick={(e) => e.stopPropagation()}>
+              <div class="verify-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <h2>Verify Payment</h2>
+              </div>
+              <div class="verify-body" style={{"text-align":"center", padding:"20px 32px"}}>
+                <p style={{"font-size":"13px", color:"var(--gray-text)", "margin-bottom":"20px"}}>For security purposes, please authenticate before proceeding with the student's request.</p>
+                <div class="bio-fingerprint" style={{margin:"0 auto", cursor:"pointer"}} onClick={confirmPayment}>
+                   <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.2"><path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/><path d="M5 19.5C5.5 18 6 15 6 12c0-3.5 2.5-6 6-6s6 2.5 6 6c0 1-.1 2-.3 3"/><path d="M12 12c0 4-1 8-4 10"/><path d="M12 12c0 2.5.5 5 2 7"/><path d="M9 12c0-1.7 1.3-3 3-3s3 1.3 3 3"/></svg>
+                </div>
+                <p style={{"margin-top":"16px", "font-weight":"600", color:"var(--navy)"}}>Ready to authenticate</p>
+                <p style={{"font-size":"11px", color:"var(--gray-text)", "margin-top":"4px"}}>Click fingerprint to simulate auth</p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
