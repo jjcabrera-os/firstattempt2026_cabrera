@@ -34,8 +34,6 @@ Reference Designs: I will provide a PDF containing mobile mockups of each page. 
 
 #### Screenshots
 
-#### Screenshots
-
 ![Login Screen](./images/login.png)
 
 ![Alumni Home](./images/home.png)
