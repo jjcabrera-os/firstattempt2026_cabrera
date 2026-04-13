@@ -14,6 +14,7 @@ git clone https://github.com/jjcabrera-os/firstattempt2026_cabrera
 cd firstattempt2026_cabrera
 npm install
 npm run dev
+```
 
 
 AI Tools:
@@ -30,8 +31,6 @@ Overview: I'm building a frontend-only Alumni Donation Web Application using Sol
 Reference Designs: I will provide a PDF containing mobile mockups of each page. Each image corresponds to a specific page (identifiable by its title and purpose). These mobile designs must be adapted into a full desktop layout while preserving the visual intent, hierarchy, and interactions shown in the mockups.
 
 ⚠️ Centralization Preference: I prefer to keep everything as centralized as possible — fewer files is always better. Combine components, styles, and logic into shared files wherever it makes sense. Do not over-split into many small files. If something can live in one file without sacrificing readability, keep it in one file.
-
-Screenshots
 
 #### Screenshots
 
