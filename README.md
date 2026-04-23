@@ -19,23 +19,30 @@ npm run dev
 
 AI Tools:
 Gemini
-
-VS Code - Github Copilot
+Claude
 
 Prompt:
 ```
-Files Attached: App.jsx, App.css, [AppDev] Act#10 Documentation.pdf
+Act as a Senior System Architect. I need to convert my static SolidJS web application into an offline-ready Progressive Web Application (PWA). I am using Vite as my build tool and NPM as my package manager.
 
-Project: Alumni Donation Web Application (SolidJS)
-Overview: I'm building a frontend-only Alumni Donation Web Application using SolidJS.
-I need help replicating a set of reference design images (provided as a PDF) into a fully functional, high-fidelity interactive prototype.
-There is no backend or database — all flows should work as pure UI/UX (e.g., login proceeds even with blank fields).
+Do not write a vanilla Service Worker from scratch. We must use the `vite-plugin-pwa` package for enterprise-grade, automated caching.
 
-Reference Designs: I will provide a PDF containing mobile mockups of each page.
-Each image corresponds to a specific page (identifiable by its title and purpose).
-These mobile designs must be adapted into a full desktop layout while preserving the visual intent, hierarchy, and interactions shown in the mockups.
-```
-⚠️ Centralization Preference: I prefer to keep everything as centralized as possible — fewer files is always better. Combine components, styles, and logic into shared files wherever it makes sense. Do not over-split into many small files. If something can live in one file without sacrificing readability, keep it in one file.
+Here are the exact project variables:
+- App Name: AdDU Alumni Hub
+- Short Name: Alumni Hub
+- Theme Color: #1B2A4A
+- Background Color: #1B2A4A
+- Icons: Located in the `/public` folder, named `icon-192x192.png` and `icon-512x512.png`.
+- Root Component: `src/index.jsx`
+- Vite Config: `vite.config.js`
+
+Please provide:
+1. The exact NPM terminal command to install `vite-plugin-pwa`.
+2. The complete code for `vite.config.js` incorporating the VitePWA plugin with a 'generateSW' strategy.
+3. The code for `src/index.jsx` showing exactly where to import and call `registerSW()`.
+4. The meta tags for the `<head>` of `index.html`.
+
+Give me the raw code for these files without guessing variables.
 
 #### Screenshots
 
